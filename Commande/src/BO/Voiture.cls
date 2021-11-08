@@ -26,7 +26,32 @@ XData MessageMap
     <MapItem MessageType="msg.creerVoitureDmde">
         <Method>creerVoiture</Method>
     </MapItem>
+     <MapItem MessageType="msg.supprimerVoitureDmde">
+        <Method>supprimerVoiture</Method>
+    </MapItem>
 </MapItems>
+}
+
+Method supprimerVoiture(pRequest As msg.supprimerVoitureDmde, Output pResponse As msg.supprimerVoitureRpse) As %Status
+{
+    
+    set pResponse = ##class(msg.supprimerVoitureRpse).%New()
+    if (##class(data.Voiture).consulterParPlaqueExists(pRequest.plaque, .idVoiture)){
+        set voiture = ##class(data.Voiture).%DeleteId(idVoiture)
+        if 'voiture{
+            set pResponse.codeRetour = "KO"
+            set pResponse.libErreur = "Erreur technique lors de la suppression"
+            QUIT $$$OK
+        }
+    }
+    else {
+        set pResponse.codeRetour = "KO"
+        set pResponse.libErreur = "Plaque introuvable"
+        QUIT $$$OK
+    }
+    set pResponse.codeRetour = "OK"
+
+    Quit $$$OK
 }
 
 }
